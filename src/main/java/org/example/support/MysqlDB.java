@@ -44,4 +44,14 @@ public class MysqlDB {
             connection.setAutoCommit(false);
         }
     }
+
+    /** 关闭 */
+    public static void closeAll(AutoCloseable... autoCloseable) throws Exception {
+        for (AutoCloseable auto : autoCloseable) {
+            if (auto == null) {
+                continue;
+            }
+            auto.close();
+        }
+    }
 }

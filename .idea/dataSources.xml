@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="DataSourceManagerImpl" format="xml" multifile-model="true">
-    <data-source source="LOCAL" name="test@localhost" uuid="addf129b-d49b-4827-b2f1-2f8f5430d5f3">
+    <data-source source="LOCAL" name="test@localhost" uuid="dc30ad62-d2b7-4835-b8fe-c0b468085fbf">
       <driver-ref>mysql.8</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>com.mysql.jdbc.Driver</jdbc-driver>
@@ -13,9 +13,6 @@
         <property name="com.intellij.clouds.kubernetes.db.container.port" />
       </jdbc-additional-properties>
       <working-dir>$ProjectFileDir$</working-dir>
-      <driver-properties>
-        <property name="allowPublicKeyRetrieval" value="TRUE" />
-      </driver-properties>
     </data-source>
   </component>
 </project>
