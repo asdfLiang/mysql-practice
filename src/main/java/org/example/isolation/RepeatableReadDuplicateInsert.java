@@ -1,13 +1,15 @@
 package org.example.isolation;
 
 import org.example.support.MysqlDB;
+import org.example.support.ResultUtil;
 import org.example.support.UUIDUtil;
 
 import java.sql.*;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 /**
- * 可重复读导隔离级别 - 导致重复插入问题
+ * 可重复读导隔离级别 - 重复插入问题
  *
  * <p>每个流程对应一个任务
  *
@@ -41,7 +43,8 @@ public class RepeatableReadDuplicateInsert {
             System.out.println("事务1开启");
             // 第一次读（如果没有第一次读，此时不会生成快照，阻塞后就能查到事务2插入的数据）
             ResultSet rs1 = stat.executeQuery("SELECT * FROM test_task WHERE process_id = 1");
-            System.out.println("事务1第一次读: " + rs1.next());
+            List<Object> list1 = ResultUtil.getList(rs1, Object.class);
+            System.out.println("事务1第一次读: " + list1.size());
 
             // 停顿5秒，等另一个事务执行完
             System.out.println("事务1阻塞");
@@ -50,9 +53,9 @@ public class RepeatableReadDuplicateInsert {
 
             // 重复读，检查process是否已有任务（此时另一个事务已经插入数据了，但因为可重复读，所以查不到）
             ResultSet rs2 = stat.executeQuery("SELECT * FROM test_task WHERE process_id = 1");
-            boolean haveData = rs2.next();
-            System.out.println("事务1重复读: " + haveData);
-            if (haveData) {
+            List<Object> list2 = ResultUtil.getList(rs2, Object.class);
+            System.out.println("事务1重复读: " + list2.size());
+            if (!list2.isEmpty()) {
                 System.out.println("事务1查到了插入的数据，中断执行");
                 return;
             }
@@ -65,6 +68,7 @@ public class RepeatableReadDuplicateInsert {
                             + "VALUES ('"
                             + UUIDUtil.getUUID()
                             + "', '事务1插入任务', 0, 1, false)");
+            System.out.println("事务1插入数据");
 
             connection.commit();
             MysqlDB.closeAll(rs1, rs2, stat, connection);
@@ -94,6 +98,7 @@ public class RepeatableReadDuplicateInsert {
                             + "VALUES ('"
                             + UUIDUtil.getUUID()
                             + "', '事务2插入任务', 0, 1, false)");
+            System.out.println("事务2插入数据");
 
             connection.commit();
             MysqlDB.closeAll(stat, connection);
