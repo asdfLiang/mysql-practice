@@ -77,6 +77,13 @@ public class RepeatableReadPhantomRead {
             Statement statement = connection.createStatement();
             System.out.println("事务2开启");
 
+            // 检查process是否已有任务
+            ResultSet rs = statement.executeQuery("SELECT * FROM test_task WHERE process_id = 2");
+            if (rs.next()) {
+                System.out.println("事务2查到了插入的数据，中断执行");
+                return;
+            }
+
             // 插入数据
             statement.execute(
                     "INSERT INTO "
